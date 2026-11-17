@@ -1,0 +1,21 @@
+{
+  "name": "image-illumination-enhancement-wgif",
+  "version": "1.0.0",
+  "description": "Image Illumination Enhancement using Weighted Guided Image Filter (WGIF) for Visual Inspection",
+  "main": "src/web/app.js",
+  "scripts": {
+    "start": "npx serve src/web -l 3000",
+    "serve": "node -e \"const http = require('http'), fs = require('fs'), path = require('path'); const mime = {'.html':'text/html','.css':'text/css','.js':'application/javascript'}; const server = http.createServer((req, res) => { let filePath = path.join(__dirname, 'src', 'web', req.url === '/' ? 'index.html' : req.url); fs.readFile(filePath, (err, data) => { if (err) { res.writeHead(404); res.end('Not Found'); } else { res.writeHead(200, { 'Content-Type': mime[path.extname(filePath)] || 'text/plain' }); res.end(data); } }); }); server.listen(3000, () => console.log('WGIF Visual Inspection Server running at http://localhost:3000'));\""
+  },
+  "keywords": [
+    "wgif",
+    "weighted-guided-filter",
+    "image-processing",
+    "low-light-enhancement",
+    "visual-inspection",
+    "defect-detection",
+    "retinex"
+  ],
+  "author": "",
+  "license": "MIT"
+}

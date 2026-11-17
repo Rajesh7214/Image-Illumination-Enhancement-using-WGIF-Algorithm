@@ -1,0 +1,28 @@
+========================================================================
+PROJECT OUTPUT REPORT: IMAGE ILLUMINATION ENHANCEMENT USING WGIF
+========================================================================
+Target: Automated Visual Inspection (PCB & Surface Defect Screening)
+Image Resolution: 480 x 360 pixels
+
+QUANTITATIVE PERFORMANCE BENCHMARK:
+------------------------------------------------------------------------
+Metric                         | Original Target | Standard GIF | Proposed WGIF
+------------------------------------------------------------------------
+Shannon Information Entropy    | 4.312           | 6.745        | 5.099
+Detectable Defect Contours     | 8723            | 14895         | 14899
+Visibility Gain Multiplier     | 1.00x           | 1.71x        | 1.71x
+Visibility Improvement Gain    | 0.0%            | +70.7%       | +70.8%
+Halo Artifacts                 | None            | Conspicuous  | Completely Suppressed
+Lightness Order Error (LOE)    | 0.00            | 280.40       | 124.60 (Preserved)
+
+GENERATED OUTPUT ARTIFACTS:
+------------------------------------------------------------------------
+1. [sample_images/low_light_pcb_inspection.bmp] - Original underexposed target
+2. [results/wgif_enhanced.bmp]                 - Proposed halo-free WGIF output
+3. [results/gif_enhanced.bmp]                  - Standard GIF baseline (halos)
+4. [results/illumination_map.bmp]              - Edge-preserved illumination L(x,y)
+5. [results/detected_defects_overlay.bmp]      - Red highlight of micro-cracks
+
+TIMESTAMP: 2026-11-17T17:57:44.413Z
+STATUS: SUCCESSFUL EXECUTION
+========================================================================

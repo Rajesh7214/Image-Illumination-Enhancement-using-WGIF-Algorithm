@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Illumination Enhancement using WGIF Algorithm</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <header class="navbar">
+      <div class="brand">
+        <div class="logo-badge">WGIF</div>
+        <div>
+          <h1>Illumination Enhancement & Visual Inspection</h1>
+          <p class="subtitle">Weighted Guided Image Filter Retinex Architecture for Low-Light Defect Detection</p>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <button id="btnLoadSample" class="btn btn-secondary">Load Inspection Sample</button>
+        <label for="fileInput" class="btn btn-primary">
+          <span>Upload Image</span>
+          <input type="file" id="fileInput" accept="image/*" />
+        </label>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <!-- Control Sidebar -->
+      <aside class="sidebar">
+        <div class="panel">
+          <h2>WGIF Parameters</h2>
+          
+          <div class="control-group">
+            <div class="label-row">
+              <label for="paramRadius">Window Radius (r)</label>
+              <span id="valRadius" class="val-badge">12 px</span>
+            </div>
+            <input type="range" id="paramRadius" min="3" max="30" value="12" step="1" />
+            <small>Controls local structural neighborhood scale.</small>
+          </div>
+
+          <div class="control-group">
+            <div class="label-row">
+              <label for="paramEps">Regularization (&lambda;)</label>
+              <span id="valEps" class="val-badge">0.010</span>
+            </div>
+            <input type="range" id="paramEps" min="0.001" max="0.05" value="0.01" step="0.001" />
+            <small>Balance between edge preservation and smoothing.</small>
+          </div>
+
+          <div class="control-group">
+            <div class="label-row">
+              <label for="paramGamma">Illumination Gamma (&gamma;)</label>
+              <span id="valGamma" class="val-badge">0.45</span>
+            </div>
+            <input type="range" id="paramGamma" min="0.2" max="0.9" value="0.45" step="0.05" />
+            <small>Lower values brighten severe shadow regions.</small>
+          </div>
+
+          <div class="control-group">
+            <div class="label-row">
+              <label for="paramDetail">Detail Boost (&kappa;)</label>
+              <span id="valDetail" class="val-badge">1.4x</span>
+            </div>
+            <input type="range" id="paramDetail" min="1.0" max="2.5" value="1.4" step="0.1" />
+            <small>Amplifies surface micro-scratches and cracks.</small>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Inspection Controls</h2>
+          <div class="control-group">
+            <div class="label-row">
+              <label for="paramEdgeThresh">Defect Edge Sensitivity</label>
+              <span id="valEdgeThresh" class="val-badge">25</span>
+            </div>
+            <input type="range" id="paramEdgeThresh" min="10" max="60" value="25" step="1" />
+          </div>
+
+          <div class="control-group toggle-group">
+            <label class="switch">
+              <input type="checkbox" id="chkOverlayDefects" checked />
+              <span class="slider round"></span>
+            </label>
+            <span class="switch-label">Highlight Defect Contours</span>
+          </div>
+
+          <div class="control-group toggle-group">
+            <label class="switch">
+              <input type="checkbox" id="chkCompareStandard" />
+              <span class="slider round"></span>
+            </label>
+            <span class="switch-label">Compare with Standard Guided Filter (GIF)</span>
+          </div>
+
+          <button id="btnProcess" class="btn btn-accent full-width">Re-compute Enhancement</button>
+        </div>
+
+        <div class="panel metrics-panel">
+          <h2>Inspection Metrics</h2>
+          <div class="metric-grid">
+            <div class="metric-card">
+              <span class="metric-title">Visibility Gain</span>
+              <span id="metricGain" class="metric-val text-success">--</span>
+              <span class="metric-sub">Revealed features</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-title">Entropy</span>
+              <span id="metricEntropy" class="metric-val">--</span>
+              <span class="metric-sub">Information content</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-title">Avg Gradient</span>
+              <span id="metricAG" class="metric-val">--</span>
+              <span class="metric-sub">Edge sharpness</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-title">Contrast (EME)</span>
+              <span id="metricEME" class="metric-val">--</span>
+              <span class="metric-sub">Local contrast score</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Viewer Area -->
+      <section class="viewer-area">
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="side-by-side">Side-by-Side View</button>
+          <button class="tab-btn" data-tab="split-slider">Interactive Split Slider</button>
+          <button class="tab-btn" data-tab="decomposition">Retinex Decomposition (L, R, Details)</button>
+        </div>
+
+        <!-- View 1: Side by side -->
+        <div id="tabContentSide" class="tab-view active">
+          <div class="comparison-grid">
+            <div class="canvas-wrapper">
+              <div class="view-tag">Original Underexposed Inspection Target</div>
+              <canvas id="canvasOriginal"></canvas>
+            </div>
+            <div class="canvas-wrapper">
+              <div class="view-tag tag-enhanced">WGIF Enhanced & Defect Highlighted</div>
+              <canvas id="canvasEnhanced"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- View 2: Split slider -->
+        <div id="tabContentSplit" class="tab-view">
+          <div class="split-slider-container" id="splitSliderContainer">
+            <canvas id="canvasSplitBefore"></canvas>
+            <div class="split-after-wrapper" id="splitAfterWrapper">
+              <canvas id="canvasSplitAfter"></canvas>
+            </div>
+            <div class="slider-handle" id="sliderHandle">
+              <div class="handle-line"></div>
+              <div class="handle-knob">&#x2194;</div>
+            </div>
+          </div>
+          <div class="slider-hint">Drag slider to compare Before (Original) vs After (WGIF Enhanced)</div>
+        </div>
+
+        <!-- View 3: Decomposition -->
+        <div id="tabContentDecomp" class="tab-view">
+          <div class="decomp-grid">
+            <div class="canvas-wrapper">
+              <div class="view-tag">Illumination Map L(x, y)</div>
+              <canvas id="canvasIllum"></canvas>
+            </div>
+            <div class="canvas-wrapper">
+              <div class="view-tag">Reflectance Layer R(x, y)</div>
+              <canvas id="canvasReflectance"></canvas>
+            </div>
+            <div class="canvas-wrapper">
+              <div class="view-tag">High-Frequency Details D(x, y)</div>
+              <canvas id="canvasDetails"></canvas>
+            </div>
+            <div class="canvas-wrapper">
+              <div class="view-tag">Defect & Contour Mask</div>
+              <canvas id="canvasDefects"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action bar -->
+        <div class="viewer-actions">
+          <button id="btnDownload" class="btn btn-secondary">Download Enhanced Image</button>
+          <button id="btnDownloadReport" class="btn btn-secondary">Download Inspection Summary</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
